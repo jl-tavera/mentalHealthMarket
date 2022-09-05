@@ -82,12 +82,19 @@ MERGE
 
 whoStats = pd.merge(healthPop, whoCodes)
 whoData = pd.merge(whoStats, totalPop)
+wbdata1 = pd.merge(whoData, business)
+wbdata2 = pd.merge(wbdata1, primarySE)
+wbdata3 = pd.merge(wbdata2, secondarySE)
+data = pd.merge(wbdata3, young)
 
 '''
 TOTAL PSYCHOLOGISTS
 '''
 
 data['MH size'] = round((data['Total Pop']*data['Mental Health'])/100000)
-total = data['MH size'].sum()
+data['School Enrollment'] = ((data['primarySE'] + data['secondarySE'])/2)/100
+data['Young'] = data['Young']/100
+data['Schools'] = round((data['Young']*data['School Enrollment']*data['Total Pop'])/600)
+total = data['Companies'].sum()
 
-print(total)
+print(data)
