@@ -95,6 +95,12 @@ data['MH size'] = round((data['Total Pop']*data['Mental Health'])/100000)
 data['School Enrollment'] = ((data['primarySE'] + data['secondarySE'])/2)/100
 data['Young'] = data['Young']/100
 data['Schools'] = round((data['Young']*data['School Enrollment']*data['Total Pop'])/600)
-total = data['Companies'].sum()
 
-print(data)
+total_MHsize = data['MH size'].sum()
+total_companies = data['Companies'].sum()
+total_schools = data['Schools'].sum()
+
+print(total_MHsize)
+print(total_companies)
+print(total_schools)
+
