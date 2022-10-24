@@ -1,4 +1,6 @@
 #%%
+import requests
+from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 '''
@@ -15,6 +17,8 @@ business = pd.read_csv('raw/New_Business_Registered.csv')
 primarySE = pd.read_csv('raw/Primary_SE.csv')
 secondarySE = pd.read_csv('raw/Secondary_SE.csv')
 young = pd.read_csv('raw/Young.csv')
+gdp = pd.read_csv('raw/GDP.csv')
+
 
 '''
 WHO COUNTRY CODES FORMAT
@@ -76,6 +80,14 @@ young = young.loc[:, ['Country Code', '2019']]
 young = young.dropna()
 young = young.rename(columns = { '2019': 'Young'})
 
+#GDP
+
+gdp = gdp.loc[:, ['Country Code', '2019']]
+gdp = gdp.dropna()
+gdp = gdp.rename(columns = { '2019': 'GDP'})
+
+print(gdp)
+
 '''
 MERGE
 '''
@@ -85,7 +97,8 @@ whoData = pd.merge(whoStats, totalPop)
 wbdata1 = pd.merge(whoData, business)
 wbdata2 = pd.merge(wbdata1, primarySE)
 wbdata3 = pd.merge(wbdata2, secondarySE)
-data = pd.merge(wbdata3, young)
+wbdata4 = pd.merge(wbdata3, gdp)
+data = pd.merge(wbdata4, young)
 
 '''
 TOTAL PSYCHOLOGISTS
@@ -103,4 +116,31 @@ total_schools = data['Schools'].sum()
 print(total_MHsize)
 print(total_companies)
 print(total_schools)
+tam = (total_MHsize*30 + total_schools*250)*12
+
+print('TAM= ' + str(tam))
+
+url = 'https://statisticstimes.com/geography/countries-by-continents.php'
+region_table = pd.read_html(url,match='Country or Area')[0]
+region_table = region_table.rename(columns = {'ISO-alpha3 Code':'Country Code'})
+
+data = pd.merge(data, region_table)
+data = data[data['GDP'] >= 6100]
+total_MHsize = data['MH size'].sum()
+total_schools = data['Schools'].sum()
+sam = (total_MHsize*30 + total_schools*250)*12
+print('SAM= ' + str(sam))
+
+
+regions = [ 'South America', 'Caribbean', 'Central America']
+regions_2 = ['Latin America and the Caribbean']
+
+data = data[data['Region 2'].isin(regions_2)]
+total_MHsize = data['MH size'].sum()
+total_schools = data['Schools'].sum()
+som = (total_MHsize*30 + total_schools*250)*12
+
+
+print('SOM= ' + str(som))
+
 
