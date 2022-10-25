@@ -86,7 +86,12 @@ gdp = gdp.loc[:, ['Country Code', '2019']]
 gdp = gdp.dropna()
 gdp = gdp.rename(columns = { '2019': 'GDP'})
 
-print(gdp)
+#World Regions
+
+url = 'https://statisticstimes.com/geography/countries-by-continents.php'
+region_table = pd.read_html(url, match='Country or Area')[0]
+region_table = region_table.rename(columns = {'ISO-alpha3 Code':'Country Code'})
+
 
 '''
 MERGE
@@ -99,9 +104,10 @@ wbdata2 = pd.merge(wbdata1, primarySE)
 wbdata3 = pd.merge(wbdata2, secondarySE)
 wbdata4 = pd.merge(wbdata3, gdp)
 data = pd.merge(wbdata4, young)
+data = pd.merge(data, region_table)
 
 '''
-TOTAL PSYCHOLOGISTS
+TOTAL PSYCHOLOGISTS AND SCHOOLS
 '''
 
 data['MH size'] = round((data['Total Pop']*data['Mental Health'])/100000)
@@ -109,38 +115,59 @@ data['School Enrollment'] = ((data['primarySE'] + data['secondarySE'])/2)/100
 data['Young'] = data['Young']/100
 data['Schools'] = round((data['Young']*data['School Enrollment']*data['Total Pop'])/600)
 
+'''
+TAM
+'''
+
 total_MHsize = data['MH size'].sum()
-total_companies = data['Companies'].sum()
 total_schools = data['Schools'].sum()
 
-print(total_MHsize)
-print(total_companies)
-print(total_schools)
+print('TOTAL ADRESSABLE MARKET')
+print('Total Population Mental Health (Worldwide): ' + str(total_MHsize)) # 1510460.0
+print('Total Schools (Worldwide): ' + str(total_schools)) # 2656178.0
+print('')
+
 tam = (total_MHsize*30 + total_schools*250)*12
+print('TAM = ' + str(tam)) # TAM = 8512299600.0
+print('')
 
-print('TAM= ' + str(tam))
 
-url = 'https://statisticstimes.com/geography/countries-by-continents.php'
-region_table = pd.read_html(url,match='Country or Area')[0]
-region_table = region_table.rename(columns = {'ISO-alpha3 Code':'Country Code'})
+'''
+SAM
+'''
 
-data = pd.merge(data, region_table)
 data = data[data['GDP'] >= 6100]
+
 total_MHsize = data['MH size'].sum()
 total_schools = data['Schools'].sum()
-sam = (total_MHsize*30 + total_schools*250)*12
-print('SAM= ' + str(sam))
 
+print('SERVICEABLE AVAILABLE MARKET')
+print('Total Population Mental Health (GDP per capita >= 6100): ' + str(total_MHsize)) # 1424099.0
+print('Total Schools (GDP per capita >= 6100): ' + str(total_schools)) # 1145921.0
+print('')
+
+sam = (total_MHsize*30 + total_schools*250)*12
+print('SAM = ' + str(sam)) # SAM = 3950438640.0
+print('')
+
+'''
+SOM
+'''
 
 regions = [ 'South America', 'Caribbean', 'Central America']
 regions_2 = ['Latin America and the Caribbean']
 
 data = data[data['Region 2'].isin(regions_2)]
+
 total_MHsize = data['MH size'].sum()
 total_schools = data['Schools'].sum()
+
+print('SERVICEABLE OBTAINABLE MARKET')
+print('Total Population Mental Health (GDP per capita >= 6100 and Latin America and the Caribbean): ' + str(total_MHsize)) # 268761.0
+print('Total Schools (GDP per capita >= 6100 and Latin America and the Caribbean): ' + str(total_schools)) # 255133.0
+print('')
+
 som = (total_MHsize*30 + total_schools*250)*12
-
-
-print('SOM= ' + str(som))
+print('SOM = ' + str(som)) # SOM = 862152960.0
 
 
