@@ -16,6 +16,7 @@ totalPop = pd.read_excel('raw/Total_Population.xls')
 business = pd.read_csv('raw/New_Business_Registered.csv')
 primarySE = pd.read_csv('raw/Primary_SE.csv')
 secondarySE = pd.read_csv('raw/Secondary_SE.csv')
+tertiarySE = pd.read_csv('raw/Tertiary_SE.csv')
 young = pd.read_csv('raw/Young.csv')
 gdp = pd.read_csv('raw/GDP.csv')
 
@@ -74,6 +75,11 @@ secondarySE = secondarySE.fillna(0)
 secondarySE['secondarySE'] = secondarySE.max(axis=1)
 secondarySE = secondarySE.loc[:, ['Country Code', 'secondarySE']]
 
+tertiarySE = tertiarySE.drop(['Country Name', 'Indicator Name', 'Indicator Code'], axis=1)
+tertiarySE = tertiarySE.fillna(0)
+tertiarySE['tertiarySE'] = tertiarySE.max(axis=1)
+tertiarySE = tertiarySE.loc[:, ['Country Code', 'tertiarySE']]
+
 #Age 0-14
 
 young = young.loc[:, ['Country Code', '2019']]
@@ -102,8 +108,9 @@ whoData = pd.merge(whoStats, totalPop)
 wbdata1 = pd.merge(whoData, business)
 wbdata2 = pd.merge(wbdata1, primarySE)
 wbdata3 = pd.merge(wbdata2, secondarySE)
-wbdata4 = pd.merge(wbdata3, gdp)
-data = pd.merge(wbdata4, young)
+wbdata4 = pd.merge(wbdata3, tertiarySE)
+wbdata5 = pd.merge(wbdata4, gdp)
+data = pd.merge(wbdata5, young)
 data = pd.merge(data, region_table)
 
 '''
@@ -114,6 +121,7 @@ data['MH size'] = round((data['Total Pop']*data['Mental Health'])/100000)
 data['School Enrollment'] = ((data['primarySE'] + data['secondarySE'])/2)/100
 data['Young'] = data['Young']/100
 data['Schools'] = round((data['Young']*data['School Enrollment']*data['Total Pop'])/600)
+data['Universities'] = round((data['Young']*data['tertiarySE']*data['Total Pop']/100)/8000)
 
 '''
 TAM
@@ -121,14 +129,16 @@ TAM
 
 total_MHsize = data['MH size'].sum()
 total_schools = data['Schools'].sum()
+total_universities = data['Universities'].sum()
+
 
 print('TOTAL ADRESSABLE MARKET')
 print('Total Population Mental Health (Worldwide): ' + str(total_MHsize)) # 1510460.0
-print('Total Schools (Worldwide): ' + str(total_schools)) # 2656178.0
+print('Total Universities (Worldwide): ' + str(total_universities)) # 80488.0
 print('')
 
-tam = (total_MHsize*30 + total_schools*250)*12
-print('TAM = ' + str(tam)) # TAM = 8512299600.0
+tam = (total_MHsize*30 + total_universities*250)*12
+print('TAM = ' + str(tam)) # TAM = 785229600.0
 print('')
 
 
@@ -140,14 +150,15 @@ data = data[data['GDP'] >= 6100]
 
 total_MHsize = data['MH size'].sum()
 total_schools = data['Schools'].sum()
+total_universities = data['Universities'].sum()
 
 print('SERVICEABLE AVAILABLE MARKET')
 print('Total Population Mental Health (GDP per capita >= 6100): ' + str(total_MHsize)) # 1424099.0
-print('Total Schools (GDP per capita >= 6100): ' + str(total_schools)) # 1145921.0
+print('Total Universities (GDP per capita >= 6100): ' + str(total_universities)) # 49811.0
 print('')
 
-sam = (total_MHsize*30 + total_schools*250)*12
-print('SAM = ' + str(sam)) # SAM = 3950438640.0
+sam = (total_MHsize*30 + total_universities*250)*12
+print('SAM = ' + str(sam)) # SAM = 662108640.0
 print('')
 
 '''
@@ -161,13 +172,14 @@ data = data[data['Region 2'].isin(regions_2)]
 
 total_MHsize = data['MH size'].sum()
 total_schools = data['Schools'].sum()
+total_universities = data['Universities'].sum()
 
 print('SERVICEABLE OBTAINABLE MARKET')
 print('Total Population Mental Health (GDP per capita >= 6100 and Latin America and the Caribbean): ' + str(total_MHsize)) # 268761.0
-print('Total Schools (GDP per capita >= 6100 and Latin America and the Caribbean): ' + str(total_schools)) # 255133.0
+print('Total Universities (GDP per capita >= 6100 and Latin America and the Caribbean): ' + str(total_universities)) # 9126.0
 print('')
 
-som = (total_MHsize*30 + total_schools*250)*12
-print('SOM = ' + str(som)) # SOM = 862152960.0
+som = (total_MHsize*30 + total_universities*250)*12
+print('SOM = ' + str(som)) # SOM = 124131960.0
 
 
