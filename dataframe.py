@@ -122,6 +122,7 @@ data['School Enrollment'] = ((data['primarySE'] + data['secondarySE'])/2)/100
 data['Young'] = data['Young']/100
 data['Schools'] = round((data['Young']*data['School Enrollment']*data['Total Pop'])/600)
 data['Universities'] = round((data['Young']*data['tertiarySE']*data['Total Pop']/100)/8000)
+data['Income'] = (data['MH size']*30 + data['Universities']*250 )*12
 data.to_csv( 'output/data.csv')
 '''
 TAM

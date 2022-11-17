@@ -10,6 +10,10 @@ numpy = "*"
 beautifulsoup4 = "*"
 requests = "*"
 lxml = "*"
+seaborn = "*"
+geopandas = "*"
+mapclassify = "*"
+sklearn = "*"
 
 [dev-packages]
 ipykernel = "*"
